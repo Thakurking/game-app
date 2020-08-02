@@ -11,7 +11,7 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    Email: {
+    Name: {
         type: String,
         required: true,
     },
@@ -23,7 +23,11 @@ const UserSchema = new Schema({
     Status: {
         type: String,
         required: true,
-    }
+    },
+    Verification: {
+        type: String,
+        required: true,
+    },
 })
 
 module.exports = mongoose.model("user", UserSchema);

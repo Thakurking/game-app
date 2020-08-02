@@ -6,67 +6,37 @@ const router = express.Router();
 const mongoose = require('mongoose');
 //Nodemailer
 const nodemailer = require("nodemailer");
+//Bcrypt
+const bcrypt = require('bcrypt');
 
 
 //connecting mongoose databse
 mongoose.connect('mongodb://localhost/my_database', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
 }, (err) => {
   if(err) throw err;
   console.log("mongoDB connection established")
 });
 
-///Nodemailer Connection Setup
-const mail = require("../config/mail")
-let transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: mail.user,
-    pass: mail.pass,
-  }
+
+//Controllers
+const SignupController = require("../controller/signup")
+const LoginController = require("../controller/login")
+
+
+router.post('/signup', function(req, res){ 
+  SignupController.signup
 })
 
-//Database Table
-const users = require("../model/user")
+router.post('/verification', function (req, res){
+  SignupController.verification
+})
 
-
-router.post('/signup', async (req, res)=> {
-  try {
-    const {Email, Phone, Name, Password, PasswordCheck} = req.body;
-    if(!Email || !Phone || !Password || !Name){
-      return res
-      .status(400)
-      .json({error: "please add all fields"})
-    }
-    if(Password.length < 6){
-      return res
-      .status(400)
-      .json({error: "Password must be at least 6 characters"})
-    }
-    if(Password !== PasswordCheck){
-      return res
-      .status(400)
-      .json({error: "Enter same password twice correctly"})
-    }
-    const existingUser = await users.findOne({Email: Email})
-    if(existingUser){
-      return res
-      .status(400)
-      .json({error: "Email already exist"})
-    }else{
-      const otp = Math.floor(Math.random() * 10000 + 1)
-      const mailOption = {
-        from: mail.user,
-        to: Email,
-        subject: `Account Verification`,
-        html: `<h1>Account Verification</h1><br><hr><p>Please click to the link below to activate your account</p>
-        <br><a href="http://localhost:3000/verification?verify=${otp}">Activate</a>`,
-      }
-    }
-  } catch (error) {
-    res.status(500).json(error)
-  }
-});
+router.post('/login', function(req, res){
+  LoginController.login
+})
 
 module.exports = router;
