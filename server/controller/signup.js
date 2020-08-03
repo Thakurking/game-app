@@ -30,11 +30,12 @@ const users = require("../model/user")
 //#region User Signup Route
 exports.signup = async (req, res)=> {
     try {
+      console.log("hello")
       const {Email, Phone, Name, Password, PasswordCheck} = req.body;
       if(!Email || !Phone || !Password || !Name){
         return res
         .status(400)
-        .json({err: "please add all fields"})
+        .json({err: "Please Add The Fields"})
       }
       if(Password.length < 6){
         return res
@@ -51,7 +52,7 @@ exports.signup = async (req, res)=> {
         .status(400)
         .json({err: "Please Enter valid Email"})
       }
-      if(Phone.length <10 && !Phone.length>10){
+      if(Phone.length <10 && !Phone.length>10 && isNaN(Phone)){
           return res
           .status(400)
           .json({err: "Please Enter Valid Number"})
@@ -60,7 +61,7 @@ exports.signup = async (req, res)=> {
       if(existingUser){
         return res
         .status(400)
-        .json({error: "Email already exist"})
+        .json({error: "Email Already Exist"})
       }else{
         const otp = Math.floor(Math.random() * 10000 + 1)
         const mailOption = {
@@ -68,19 +69,22 @@ exports.signup = async (req, res)=> {
           to: Email,
           subject: `Gamo Account Verification`,
           html: `<h1>Account Verification</h1><br><hr><p>Please click to the link below to activate your account</p>
-          <br><a href="http://localhost:3000/verification?verify=${otp}">Activate</a>`,
+          <br><button><a href="http://localhost:3000/verification?verify=${otp}">Activate</a></button>`,
         };
         transporter.sendMail(mailOption, (err, info) => {
           if(err){
+            console.log(err)
             return res.status(400).json(err)
           }else{
-            bcrypt.genSalt(bcr.round, function(err, salt){
+            bcrypt.genSalt(bcr.round, (err, salt) =>{
               if(err){
+                console.log(err)
                 return res
                 .status(400)
                 .json({err: "Salt Not Created"})
               }else{
                 bcrypt.hash(Password, salt, async(err, hash)=>{
+                  console.log(err)
                   if(err){
                     return res
                     .status(400)
@@ -95,13 +99,14 @@ exports.signup = async (req, res)=> {
                       Verification: otp,
                     }, async(err, result)=>{
                       if(err){
+                        console.log(err)
                         return res
                         .status(400)
-                        .json({err: "Cound Not Register User"})
+                        .json({err: "Cound Not Register User Please Try Again"})
                       }else{
                         return res
                         .status(400)
-                        .json({msg: "ThankYou For Registration We Have Sent You Mail Verification Link In Your Mail Please Verify"})
+                        .json({msg: "ThankYou For Registration We Have Sent Verification Link In Your Email Please Verify"})
                       }
                     })
                   }
@@ -162,7 +167,7 @@ exports.verification = async(req, res)=>{
       console.log(error)
         return res
         .status(500)
-        .json(err: "INternal Server Error Please Try Again Later")
+        .json({err: "Internal Server Error Please Try Again Later"})
     }
   }
   //#endregion

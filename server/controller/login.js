@@ -15,15 +15,6 @@ const validator = require('validator');
 const mail = require("../config/mail")
 const bcr = require("../config/bcrypt")
 
-//Nodemailer Connection Setup
-let transporter = nodemailer.createTransport({
-    service: mail.service,
-    auth: {
-      user: mail.user,
-      pass: mail.pass,
-    }
-  })
-
 //Database Table Models
 const users = require("../model/user");
 
