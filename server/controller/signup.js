@@ -17,7 +17,7 @@ const bcr = require("../config/bcrypt")
 
 //Nodemailer Connection Setup
 let transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: mail.service,
     auth: {
       user: mail.user,
       pass: mail.pass,
@@ -25,9 +25,9 @@ let transporter = nodemailer.createTransport({
   })
 
 //Database Table Models
-const users = require("../model/user");
+const users = require("../model/user")
 
-//#region Signup Route
+//#region User Signup Route
 exports.signup = async (req, res)=> {
     try {
       const {Email, Phone, Name, Password, PasswordCheck} = req.body;
@@ -46,7 +46,12 @@ exports.signup = async (req, res)=> {
         .status(400)
         .json({err: "Enter same password twice correctly"})
       }
-      if(Phone.length <10 && !Phone.length>10 && isNaN(Phone)){
+      if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(Email)){
+        return res
+        .status(400)
+        .json({err: "Please Enter valid Email"})
+      }
+      if(Phone.length <10 && !Phone.length>10){
           return res
           .status(400)
           .json({err: "Please Enter Valid Number"})
@@ -73,13 +78,13 @@ exports.signup = async (req, res)=> {
               if(err){
                 return res
                 .status(400)
-                .json({err: "salt coud not be created"})
+                .json({err: "Salt Not Created"})
               }else{
                 bcrypt.hash(Password, salt, async(err, hash)=>{
                   if(err){
                     return res
                     .status(400)
-                    .json({err: "could not hashed password"})
+                    .json({err: "Could Not Hashed Password"})
                   }else{
                     await users.create({
                       Email: Email,
@@ -92,7 +97,7 @@ exports.signup = async (req, res)=> {
                       if(err){
                         return res
                         .status(400)
-                        .json({err: "Cound not register user"})
+                        .json({err: "Cound Not Register User"})
                       }else{
                         return res
                         .status(400)
@@ -107,9 +112,10 @@ exports.signup = async (req, res)=> {
         })
       }
     } catch (error) {
-      res
+      console.log(error)
+      return res
       .status(500)
-      .json(error)
+      .json({err: "internal Server Error"})
     }
   }
 //#endregion
@@ -153,9 +159,10 @@ exports.verification = async(req, res)=>{
       }
     }) 
     } catch (error) {
-        res
+      console.log(error)
+        return res
         .status(500)
-        .json(error)
+        .json(err: "INternal Server Error Please Try Again Later")
     }
   }
   //#endregion
