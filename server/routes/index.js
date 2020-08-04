@@ -25,18 +25,23 @@ mongoose.connect('mongodb://localhost/my_database', {
 //Controllers
 const SignupController = require("../controller/signup")
 const LoginController = require("../controller/login")
+const AdminController = require("../controller/adminSignup")
 
 
-router.post('/signup', function(req, res){ 
+router.post('/signup', (req, res) =>{ 
   SignupController.signup
 })
 
-router.post('/verification', function (req, res){
+router.post('/verification', (req, res) =>{
   SignupController.verification
 })
 
-router.post('/login', function(req, res){
+router.post('/login', (req, res) =>{
   LoginController.login
+})
+
+router.post('/admin_request_gamo', (req, res)=>{
+  AdminController.admin-request
 })
 
 module.exports = router;

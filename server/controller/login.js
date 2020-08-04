@@ -60,7 +60,7 @@ exports.login = async(req, res)=> {
             .status(400)
             .json({msg: "Wrong Email Or Password Please Try Again"})
           }else{
-            const token = jwt.sign({data: obj._id}, bcr.secretkey, {expriesIn: "1h"})
+            const token = jwt.sign({data: obj._id}, bcr.key, {expriesIn: "1h"})
             const {Id, Email, Name} = obj
             res.json({token, user:{Id, Email, Name}})
           }

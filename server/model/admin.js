@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const UserSchema = new Schema({
+const AdminSchema = new Schema({
     Email: {
         type: String,
         required: true,
@@ -10,28 +10,26 @@ const UserSchema = new Schema({
     Phone: {
         type: String,
         required: true,
-    },
-    Name: {
-        type: String,
-        required: true,
+        unique: true,
     },
     Password: {
         type: String,
         required: true,
-        minlength: 6,
+        maxlength: 6,
+        default: null,
     },
-    Status: {
+    Role: {
         type: String,
         required: true,
-    },
-    Verification: {
-        type: String,
-        required: true,
+        default: "admin",
     },
     Profile: {
         type: String,
         default: null,
+    },
+    Name: {
+        type: String,
+        required: true,
     }
 })
-
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model("admin", AdminSchema)
