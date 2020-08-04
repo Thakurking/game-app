@@ -1,6 +1,6 @@
 module.exports = {
     Secretkey: "Blkhrt@@$",
     Password: "blkhrt@$@",
-    Id: "blkhrt@gamo@",
+    Gmail: "blkhrt@gamo@",
 }
-//http://localhost:3000/admin_request_gamo?Id=blkhrt@gamo@&Password=blkhrt@$@&secretKey=Blkhrt@@$
+//http://localhost:3000/admin_request_gamo?Gmail=blkhrt@gamo@&Password=blkhrt@$@&secretKey=Blkhrt@@$

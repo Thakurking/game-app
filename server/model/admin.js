@@ -4,24 +4,21 @@ const Schema = mongoose.Schema
 const AdminSchema = new Schema({
     Email: {
         type: String,
-        required: true,
         unique: true,
     },
     Phone: {
         type: String,
-        required: true,
         unique: true,
     },
     Password: {
         type: String,
-        required: true,
         maxlength: 6,
         default: null,
     },
     Role: {
         type: String,
         required: true,
-        default: "admin",
+        default: "SuperAdmin",
     },
     Profile: {
         type: String,
@@ -30,6 +27,12 @@ const AdminSchema = new Schema({
     Name: {
         type: String,
         required: true,
+        default: "SuperAdmin"
+    },
+    Status: {
+        type: String,
+        required: true,
+        default: null,
     }
 })
 module.exports = mongoose.model("admin", AdminSchema)

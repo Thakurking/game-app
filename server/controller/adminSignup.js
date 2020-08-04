@@ -12,28 +12,18 @@ const bcrypt = require('bcrypt');
 const validator = require('validator');
 
 //Configuration files
-const mail = require("../config/mail")
 const bcr = require("../config/bcrypt")
 const admindetail = require("../config/adminDetail")
-
-//Nodemailer Connection Setup
-let transporter = nodemailer.createTransport({
-    service: mail.service,
-    auth: {
-      user: mail.user,
-      pass: mail.pass,
-    }
-  })
 
 //Database Table Models
 const admin = require("../model/admin")
 
 //#region Admin Request Hande Route
 exports.admin_request_gamo = async(req, res) =>{
-    const Id = req.query.Id
+    const Gmail = req.query.Id
     const Password = req.query.Password
     const Secretkey = req.query.SecretKey
-    if(!Id || !Password || !Secretkey){
+    if(!Gmail || !Password || !Secretkey){
         return res
         .status(400)
         .json({err: "No Credential Entered"})
@@ -43,15 +33,35 @@ exports.admin_request_gamo = async(req, res) =>{
         .status(400)
         .json({err: "Password Wrong"})
     }
-    if(Id !== admindetail.Id){
+    if(Gmail !== admindetail.Id){
         return res
         .status(400)
-        .json({err: "Is Wrong"})
+        .json({err: "Id Wrong"})
     }
     if(Secretkey !== admindetail.Secretkey){
         return res
         .status(400)
         .json({err: "Secret Key Wrong"})
     }
+    await admin.create({
+        Email: Gmail,
+        Password: bcrypt.hashSync(Password, bcr.round),
+        Status: "A",
+    }, async(err, res) =>{
+        if(err){
+            console.log(err)
+            return res
+            .status(400)
+            .json({err: "Some Error Occured Please Try Again"})
+        }
+        if(res === null){
+            return res
+            .status(400)
+            .json({err: "Cound Not Create Admin Access"})
+        }else{
+            return res
+            .status(400)
+            .json({msg: "Your Admin Access Created"})
+        }
+    })
 }
-
