@@ -36,8 +36,6 @@ router.post("/verification", SignupController.verification)
 
 router.post("/login", LoginController.login)
 
-router.get("/admin_request_gamo", AdminRequestController.admin_request_gamo)
-
-router.post("/adminLogin", AdminSignupController.adminLogin)
+router.get("/admin_request_gamo", AdminController.admin_request_gamo);
 
 module.exports = router;
