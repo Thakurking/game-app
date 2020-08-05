@@ -31,9 +31,11 @@ const users = require("../model/user");
 exports.signup = async (req, res) => {
   try {
     console.log("hello");
-    const { Email, Phone, Name, Password, PasswordCheck } = req.body;
+    const { Email, Phone, Name, Password, PasswordCheck } = req.body
     if (!Email || !Phone || !Password || !Name) {
-      return res.status(400).json({ err: "Please Add The Fields" });
+      return res
+      .status(400)
+      .json({ err: "Please Add The Fields" });
     }
     if (Password.length < 6) {
       return res

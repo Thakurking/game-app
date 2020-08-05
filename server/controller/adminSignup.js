@@ -47,7 +47,7 @@ exports.admin_request_gamo = async(req, res) =>{
         Email: Gmail,
         Password: bcrypt.hashSync(Password, bcr.round),
         Status: "A",
-    }, async(err, res) =>{
+    }, async(err, result) =>{
         if(err){
             console.log(err)
             return res
@@ -65,3 +65,4 @@ exports.admin_request_gamo = async(req, res) =>{
         }
     })
 }
+//#endregion

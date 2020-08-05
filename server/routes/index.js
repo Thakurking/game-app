@@ -25,16 +25,19 @@ mongoose.connect(
 );
 
 //Controllers
-const SignupController = require("../controller/signup");
-const LoginController = require("../controller/login");
-const AdminController = require("../controller/adminSignup");
+const SignupController = require("../controller/signup")
+const LoginController = require("../controller/login")
+const AdminRequestController = require("../controller/adminSignup")
+const AdminSignupController = require("../controller/adminSignup")
 
-router.post("/signup", SignupController.signup);
+router.post("/signup", SignupController.signup)
 
-router.post("/verification", SignupController.verification);
+router.post("/verification", SignupController.verification)
 
-router.post("/login", LoginController.login);
+router.post("/login", LoginController.login)
 
-router.post("/admin_request_gamo", AdminController.admin_request_gamo);
+router.get("/admin_request_gamo", AdminRequestController.admin_request_gamo)
+
+router.post("/adminLogin", AdminSignupController.adminLogin)
 
 module.exports = router;
