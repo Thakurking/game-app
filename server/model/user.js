@@ -31,6 +31,10 @@ const UserSchema = new Schema({
     Profile: {
         type: String,
         default: null,
+    },
+    Coin: {
+        type: String,
+        default: null,
     }
 })
 
