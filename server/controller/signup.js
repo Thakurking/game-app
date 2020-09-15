@@ -34,28 +34,25 @@ exports.signup = async (req, res) => {
     const { Email, Phone, Name, Password, PasswordCheck } = req.body
     if (!Email || !Phone || !Password || !Name) {
       return res
-      .status(400)
-      .json({ err: "Please Add All The Fields", isSuccess:false });
+        .json({ Error: "Please Add All The Fields", isSuccess: false });
     }
     if (Password.length < 6) {
       return res
-        .status(400)
-        .json({ err: "Password must be at least 6 characters", isSuccess:false });
+        .json({ Error: "Password must be at least 6 characters", isSuccess: false });
     }
     if (Password !== PasswordCheck) {
       return res
-        .status(400)
-        .json({ err: "Enter same password twice correctly", isSuccess:false });
+        .json({ Error: "Enter same password twice correctly", isSuccess: false });
     }
     if (!validator.isEmail(Email)) {
-      return res.status(400).json({ err: "Please Enter valid Email", isSuccess:false });
+      return res.json({ Error: "Please Enter valid Email", isSuccess: false });
     }
-    if (Phone.length != 10 && !validator.isMobilePhone(Phone)) {
-      return res.status(400).json({ err: "Please Enter Valid Number", isSuccess:false });
+    if (!validator.isMobilePhone(Phone)) {
+      return res.json({ Error: "Please Enter Valid Number", isSuccess: false });
     }
     const existingUser = await users.findOne({ Email: Email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email Already Exist", isSuccess:false });
+      return res.json({ Error: "Email Already Exist", isSuccess: false });
     } else {
       const otp = Math.floor(Math.random() * 10000 + 1);
       const mailOption = {
@@ -63,24 +60,23 @@ exports.signup = async (req, res) => {
         to: Email,
         subject: `Gamo Account Verification`,
         html: `<h1>Account Verification</h1><br><hr><p>Please click to the link below to activate your account</p>
-          <br><button><a href="http://localhost:3000/verification?verify=${otp}">Activate</a></button>`,
+          <br><button><a href="http://localhost:5000/verification?verify=${otp}">Activate</a></button>`,
       };
       transporter.sendMail(mailOption, (err, info) => {
         if (err) {
           console.log(err);
-          return res.status(400).json(err);
+          return res.json(err);
         } else {
           bcrypt.genSalt(bcr.round, (err, salt) => {
             if (err) {
               console.log(err);
-              return res.status(400).json({ err: "Salt Not Created", isSuccess:false });
+              return res.json({ Error: "Salt Not Created", isSuccess: false });
             } else {
               bcrypt.hash(Password, salt, async (err, hash) => {
                 console.log(err);
                 if (err) {
                   return res
-                    .status(400)
-                    .json({ err: "Could Not Hashed Password", isSuccess:false });
+                    .json({ Error: "Could Not Hashed Password", isSuccess: false });
                 } else {
                   await users.create(
                     {
@@ -94,15 +90,15 @@ exports.signup = async (req, res) => {
                     async (err, result) => {
                       if (err) {
                         console.log(err);
-                        return res.status(400).json({
-                          err: "Cound Not Register User Please Try Again",
-                          isSuccess:false
+                        return res.json({
+                          Error: "Cound Not Register User Please Try Again",
+                          isSuccess: false
                         });
                       } else {
-                        return res.status(400).json({
-                          msg:
+                        return res.json({
+                          message:
                             "ThankYou For Registration We Have Sent Verification Link In Your Email Please Verify",
-                            isSuccess:false
+                          isSuccess: true
                         });
                       }
                     }
@@ -116,7 +112,7 @@ exports.signup = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ err: "internal Server Error", isSuccess:false });``
+    return res.json({ Error: "internal Server Error", isSuccess: false });
   }
 };
 //#endregion
@@ -125,7 +121,7 @@ exports.signup = async (req, res) => {
 exports.verification = async (req, res) => {
   try {
     const otp = req.query.verify;
-    await user.findOne(
+    await users.findOne(
       {
         Verification: otp,
       },
@@ -134,7 +130,7 @@ exports.verification = async (req, res) => {
           console.log(err);
           return res.send("Error Occurred Please Try Again");
         }
-        if (Obj === null) {
+        if (Obj == null) {
           console.log(Obj);
           return res.send("OTP Not found");
         } else {
@@ -163,8 +159,7 @@ exports.verification = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(500)
-      .json({ err: "Internal Server Error Please Try Again Later", isSuccess:false });
+      .json({ Error: "Internal Server Error Please Try Again Later", isSuccess: false });
   }
 };
 //#endregion

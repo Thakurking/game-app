@@ -4,41 +4,83 @@ const express = require("express");
 const router = express.Router();
 //mongoose
 const mongoose = require("mongoose");
-//Validator
-const Validator = require('validatorjs');
+//ValidatorJs
+const Validator = require("validatorjs");
+//Multer
+const multer = require("multer");
 
 //Database Table Models
-const tournamnet = require("../model/tournamentForm");
+const tournamnets = require("../model/tournaForm");
 
-//Configuration File
-const photo = require("../middleware/multer")
-
-exports.tournamentCreate = photo.single('image'), async(req, res) =>{
-    console.log("hello")
-    const { Name, Banner, noOfPlayers, Description, Fee } = req.body
-    if(!Name || !Banner || !noOfPlayers || !Description || !Fee){
-        return res
-        .json({message: "Please Add All The Fields", isSucess: false})
-    }else{
-        let data = {
-            Name: Name,
-            Banner: Banner,
+exports.tournamentCreate = async (req, res) => {
+  try {
+    console.log("hello");
+    console.log(req.file);
+    const {
+      tournamentName,
+      noOfPlayers,
+      tournamentDescription,
+      tournamentFee,
+      teamType,
+    } = req.body;
+    const banner = req.file.filename;
+    let data = {
+      tournamentName: tournamentName,
+      noOfPlayers: noOfPlayers,
+      tournamentDescription: tournamentDescription,
+      tournamentFee: tournamentFee,
+      teamType: teamType,
+    };
+    let rules = {
+      tournamentName: "required",
+      noOfPlayers: "required|numeric|max:100",
+      tournamentDescription: "required",
+      tournamentFee: "required",
+      teamType: "required",
+    };
+    let validation = new Validator(data, rules);
+    let isValid = validation.passes();
+    if (!isValid) {
+      return res.json({ Error: validation.errors.errors, isSuccess: false });
+    } else {
+      try {
+        tournamnets
+          .create({
+            tournamentName: tournamentName,
+            banner: banner,
             noOfPlayers: noOfPlayers,
-            Description: Description,
-            Fee: Fee,
-        }
-        let rules = {
-            Name: 'required',
-            Banner: 'required',
-            noOfPlayers:  'numeric',
-            Description: 'required',
-            Fee: 'numeric',
-        }
-        let validation = new Validator(data, rules)
-        const isValid = validation.passes()
-        if(!isValid){
-            return res
-            .json({Error: validation.errors.errors, isSucess: false})
-        }
+            tournamentDescription: tournamentDescription,
+            tournamentFee: tournamentFee,
+            teamType: teamType,
+          })
+          .then((tournament) => {
+            console.log(tournament);
+            res.json({
+              message: "Tournament Created Successfully",
+              isSuccess: true,
+              tournament: tournament,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.json({
+              Error: "Error Occured Please Try Again",
+              isSuccess: false,
+            });
+          });
+      } catch (error) {
+        return res.json({
+          error: error,
+          isSuccess: false,
+          Error: "Could Not Run At This Movement Please Try Again",
+        });
+      }
     }
-}
+  } catch (error) {
+    return res.json({
+      Error: "Internal Server Error PLease Try Again",
+      isSuccess: false,
+      error: error,
+    });
+  }
+};
